@@ -2,8 +2,6 @@ import { lazy, Suspense, useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
-import Navbar from './components/layout/Navbar';
-import Footer from './components/layout/Footer';
 import LoadingScreen from './components/ui/LoadingScreen';
 import './App.css';
 
@@ -16,27 +14,58 @@ const BookCoolie         = lazy(() => import('./pages/BookCoolie'));
 const CoolieListing      = lazy(() => import('./pages/CoolieListing'));
 const BookingConfirmation = lazy(() => import('./pages/BookingConfirmation'));
 const CoolieRegister      = lazy(() => import('./pages/CoolieRegister'));
+const CoolieDashboard     = lazy(() => import('./pages/CoolieDashboard'));
+
+// Layouts
+const MainLayout          = lazy(() => import('./components/layout/MainLayout'));
+const AdminLayout         = lazy(() => import('./components/layout/AdminLayout'));
+
+// Admin Pages
+const AdminLogin          = lazy(() => import('./pages/AdminLogin'));
+const AdminDashboard      = lazy(() => import('./pages/AdminDashboard'));
+const AdminCoolieRequests = lazy(() => import('./pages/AdminCoolieRequests'));
+const AdminCoolieList     = lazy(() => import('./pages/AdminCoolieList'));
 
 // AnimatePresence needs location inside Router
 function AnimatedRoutes() {
   const location = useLocation();
   return (
     <AnimatePresence mode="wait">
-      <Suspense fallback={null}>
+      <Suspense fallback={
+        <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#020617' }}>
+          <div style={{ width: '40px', height: '40px', border: '3px solid rgba(249,115,22,0.1)', borderTopColor: '#f97316', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        </div>
+      }>
         <Routes location={location} key={location.pathname}>
-          <Route path="/"                   element={<Home />} />
-          <Route path="/login"              element={<Login />} />
-          <Route path="/register"           element={<Register />} />
-          <Route path="/dashboard"          element={<Dashboard />} />
-          <Route path="/book"               element={<BookCoolie />} />
-          <Route path="/coolies"            element={<CoolieListing />} />
-          <Route path="/booking-confirmation" element={<BookingConfirmation />} />
-          <Route path="/coolie-register"    element={<CoolieRegister />} />
+          {/* Main Site Routes with MainLayout */}
+          <Route element={<MainLayout />}>
+            <Route path="/"                   element={<Home />} />
+            <Route path="/login"              element={<Login />} />
+            <Route path="/register"           element={<Register />} />
+            <Route path="/dashboard"          element={<Dashboard />} />
+            <Route path="/coolie-dashboard"   element={<CoolieDashboard />} />
+            <Route path="/book"               element={<BookCoolie />} />
+            <Route path="/coolies"            element={<CoolieListing />} />
+            <Route path="/booking-confirmation" element={<BookingConfirmation />} />
+            <Route path="/coolie-register"    element={<CoolieRegister />} />
+          </Route>
+
+          {/* Admin Portal (Isolated) */}
+          <Route path="/admin/login"        element={<AdminLogin />} />
+          <Route path="/admin"              element={<AdminLayout />}>
+            <Route path="dashboard"         element={<AdminDashboard />} />
+            <Route path="coolie-requests"   element={<AdminCoolieRequests />} />
+            <Route path="coolie-list"       element={<AdminCoolieList />} />
+            <Route index                    element={<AdminDashboard />} />
+          </Route>
         </Routes>
       </Suspense>
     </AnimatePresence>
   );
 }
+
+// Global Layout imports are now handled within Layout components
+// Navbar and Footer are imported in MainLayout.jsx
 
 export default function App() {
   const [appLoading, setAppLoading] = useState(true);
@@ -52,13 +81,7 @@ export default function App() {
       <LoadingScreen isVisible={appLoading} />
 
       <BrowserRouter>
-        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }} className="grain">
-          <Navbar />
-          <main style={{ flex: 1 }}>
-            <AnimatedRoutes />
-          </main>
-          <Footer />
-        </div>
+        <AnimatedRoutes />
       </BrowserRouter>
 
       {/* Toast notifications */}
