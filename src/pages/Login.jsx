@@ -154,10 +154,10 @@ export default function Login() {
                 <Sparkles size={28} color="#f97316" style={{ filter: 'drop-shadow(0 0 8px rgba(249,115,22,0.8))' }} />
               </motion.div>
               <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '2.25rem', color: '#ffffff', letterSpacing: '-0.02em', margin: 0 }}>
-                Welcome Back
+                Partner Login
               </h1>
               <p style={{ fontFamily: 'var(--font-body)', color: '#94a3b8', marginTop: '0.5rem', fontSize: '0.95rem' }}>
-                Securely sign in to your CoolieBook account
+                Securely sign in to your Coolie partner account
               </p>
             </div>
 
@@ -194,7 +194,7 @@ export default function Login() {
                 <div style={{ flex: 1, height: '1px', background: 'linear-gradient(270deg, transparent, rgba(255,255,255,0.1))' }} />
               </div>
 
-              <Link to="/register" style={{ textDecoration: 'none' }}>
+              <Link to="/coolie-register" style={{ textDecoration: 'none' }}>
                 <button type="button" style={{
                   width: '100%', padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
                   background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.875rem',
@@ -202,9 +202,20 @@ export default function Login() {
                   marginBottom: '1.5rem'
                 }} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}>
                   <ShieldCheck size={18} color="#10b981" />
-                  Create a Secure Account
+                  Apply as a Coolie Partner
                 </button>
               </Link>
+              
+              <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', fontFamily: 'var(--font-body)', marginBottom: '1rem' }}>
+                  Are you a passenger?
+                </p>
+                <Link to="/track" style={{ textDecoration: 'none' }}>
+                  <AnimatedButton variant="outline" style={{ width: '100%', padding: '0.75rem', fontSize: '0.85rem' }}>
+                    Track Your Booking
+                  </AnimatedButton>
+                </Link>
+              </div>
 
               {/* Seamless Link to Admin Portal */}
               <div style={{ textAlign: 'center' }}>

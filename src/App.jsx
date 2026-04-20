@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
 import LoadingScreen from './components/ui/LoadingScreen';
@@ -16,6 +16,7 @@ const CoolieListing      = lazy(() => import('./pages/CoolieListing'));
 const BookingConfirmation = lazy(() => import('./pages/BookingConfirmation'));
 const CoolieRegister      = lazy(() => import('./pages/CoolieRegister'));
 const CoolieDashboard     = lazy(() => import('./pages/CoolieDashboard'));
+const TrackBooking        = lazy(() => import('./pages/TrackBooking'));
 
 // Layouts
 const MainLayout          = lazy(() => import('./components/layout/MainLayout'));
@@ -42,38 +43,21 @@ function AnimatedRoutes() {
           {/* Main Site Routes with MainLayout */}
           <Route element={<MainLayout />}>
             <Route path="/"                   element={<Home />} />
-            <Route path="/login"              element={<Login />} />
-            <Route path="/register"           element={<Register />} />
-            <Route path="/coolie-register"    element={<CoolieRegister />} />
+            <Route path="/login"              element={<Navigate to="/track" replace />} />
+            <Route path="/register"           element={<Navigate to="/track" replace />} />
+            <Route path="/coolie-register"    element={<Navigate to="/track" replace />} />
             
-            {/* Passenger Only Routes */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute allowedRoles={['passenger']}>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/book" element={
-              <ProtectedRoute allowedRoles={['passenger']}>
-                <BookCoolie />
-              </ProtectedRoute>
-            } />
-            <Route path="/booking-confirmation" element={
-              <ProtectedRoute allowedRoles={['passenger']}>
-                <BookingConfirmation />
-              </ProtectedRoute>
-            } />
+            {/* Passenger & Guest Routes (No Login Required) */}
+            <Route path="/dashboard"          element={<Dashboard />} />
+            <Route path="/book"               element={<BookCoolie />} />
+            <Route path="/booking-confirmation" element={<BookingConfirmation />} />
+            <Route path="/track"              element={<TrackBooking />} />
+            <Route path="/coolies"            element={<CoolieListing />} />
 
             {/* Coolie Only Routes */}
             <Route path="/coolie-dashboard" element={
               <ProtectedRoute allowedRoles={['coolie']}>
                 <CoolieDashboard />
-              </ProtectedRoute>
-            } />
-
-            {/* Shared Protected Routes */}
-            <Route path="/coolies" element={
-              <ProtectedRoute allowedRoles={['passenger', 'coolie']}>
-                <CoolieListing />
               </ProtectedRoute>
             } />
           </Route>

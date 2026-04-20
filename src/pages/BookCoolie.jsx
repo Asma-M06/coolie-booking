@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MapPin, Package, Clock, Users, ChevronRight, ChevronLeft, Train,
-  Luggage, Navigation, CheckCircle, Info, Sparkles
+  Luggage, Navigation, CheckCircle, Info, Sparkles, Ticket, User, Phone, UserCheck
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import axios from 'axios';
@@ -29,9 +29,10 @@ const LUGGAGE_TYPES = [
 ];
 
 const STEPS = [
+  { label: 'Identity', icon: UserCheck },
   { label: 'Location', icon: Navigation },
   { label: 'Load', icon: Luggage },
-  { label: 'Schedule',  icon: Clock },
+  { label: 'Schedule', icon: Clock },
   { label: 'Confirm', icon: CheckCircle },
 ];
 
@@ -63,6 +64,9 @@ export default function BookCoolie() {
   const coolieName = location.state?.coolieName;
 
   const [form, setForm] = useState({ 
+    pnrNumber: '',
+    passengerName: '',
+    passengerPhone: '',
     station: '', 
     trainNumber: '', 
     platform: '', 
@@ -77,6 +81,7 @@ export default function BookCoolie() {
   const update = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
   const canProceed = [
+    form.pnrNumber.length === 10 && form.passengerName && form.passengerPhone.length === 10,
     form.station && form.platform,
     Object.values(form.luggageQuantities).some(q => q > 0),
     form.date && form.time,
@@ -84,16 +89,6 @@ export default function BookCoolie() {
   ][step];
 
   const handleSubmit = async () => {
-    if (!isAuthenticated) { 
-      Swal.fire({
-        icon: 'error',
-        title: 'Authentication Required',
-        text: 'Please login to confirm your booking.',
-        background: 'rgba(15, 23, 42, 0.95)', color: '#f8fafc', confirmButtonColor: '#f97316'
-      });
-      navigate('/login'); 
-      return; 
-    }
     setLoading(true);
     try {
       const luggageSummary = Object.entries(form.luggageQuantities)
@@ -135,7 +130,53 @@ export default function BookCoolie() {
   const labelStyle = { fontSize: '0.8rem', fontFamily: 'var(--font-body)', fontWeight: 600, color: '#94a3b8', marginBottom: '0.5rem', display: 'block' };
 
   const slides = [
-    /* ─ Step 0: Station ─ */
+    /* ─ Step 0: Passenger Identity ─ */
+    <div key="ident" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <div>
+        <label style={labelStyle}>PNR Number (10 Digits)</label>
+        <div style={{ position: 'relative' }}>
+          <Ticket size={16} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+          <input 
+            type="text" 
+            value={form.pnrNumber} 
+            onChange={(e) => update('pnrNumber', e.target.value.replace(/\D/g, '').slice(0, 10))} 
+            placeholder="Enter 10-digit PNR" 
+            className="rail-input" 
+            style={{ paddingLeft: '3rem', height: '3.25rem', backgroundColor: 'rgba(15, 23, 42, 0.6)' }} 
+          />
+        </div>
+      </div>
+      <div>
+        <label style={labelStyle}>Full Name</label>
+        <div style={{ position: 'relative' }}>
+          <User size={16} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+          <input 
+            type="text" 
+            value={form.passengerName} 
+            onChange={(e) => update('passengerName', e.target.value)} 
+            placeholder="John Doe" 
+            className="rail-input" 
+            style={{ paddingLeft: '3rem', height: '3.25rem', backgroundColor: 'rgba(15, 23, 42, 0.6)' }} 
+          />
+        </div>
+      </div>
+      <div>
+        <label style={labelStyle}>Phone Number</label>
+        <div style={{ position: 'relative' }}>
+          <Phone size={16} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+          <input 
+            type="tel" 
+            value={form.passengerPhone} 
+            onChange={(e) => update('passengerPhone', e.target.value.replace(/\D/g, '').slice(0, 10))} 
+            placeholder="9876543210" 
+            className="rail-input" 
+            style={{ paddingLeft: '3rem', height: '3.25rem', backgroundColor: 'rgba(15, 23, 42, 0.6)' }} 
+          />
+        </div>
+      </div>
+    </div>,
+
+    /* ─ Step 1: Station ─ */
     <div key="0" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <div>
         <label style={labelStyle}>Railway Station</label>

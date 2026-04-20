@@ -7,7 +7,7 @@ import useStore from '../store/useStore';
 import {
   ArrowRight, Clock, Shield, Users, Star, Train, MapPin,
   CheckCircle, TrendingUp, Award, Zap, ChevronRight, Phone,
-  Luggage, UserCheck, Navigation, Sparkles
+  Luggage, UserCheck, Navigation, Sparkles, Ticket, Search
 } from 'lucide-react';
 import { useDevice } from '../hooks/useDevice';
 import AnimatedButton from '../components/ui/AnimatedButton';
@@ -78,12 +78,12 @@ const features = [
   },
 ];
 
-/* ─── How it works ─── */
+/* ─── How it works (Updated for zero-login) ─── */
 const steps = [
-  { n: '01', icon: Phone,       title: 'Register', desc: 'Create your free account in 60 seconds', color: '#f97316' },
+  { n: '01', icon: Ticket,       title: 'Enter PNR', desc: 'Enter your 10-digit PNR for journey details', color: '#f97316' },
   { n: '02', icon: Navigation,  title: 'Choose Station', desc: 'Select your railway station & platform', color: '#f59e0b' },
-  { n: '03', icon: Luggage,     title: 'Book Coolie', desc: 'Pick an available coolie & luggage type', color: '#10b981' },
-  { n: '04', icon: CheckCircle, title: 'Arrive & Go', desc: 'Coolie meets you at the exact platform', color: '#6366f1' },
+  { n: '03', icon: Luggage,     title: 'Pick Partner', desc: 'Pick an available coolie for your luggage', color: '#10b981' },
+  { n: '04', icon: CheckCircle, title: 'Travel Stress-free', desc: 'Coolie meets you at the exact platform', color: '#6366f1' },
 ];
 
 /* ─── Coolies ─── */
@@ -225,25 +225,53 @@ export default function Home() {
               Available 24/7 — for tourists, elderly, and differently-abled travelers.
             </motion.p>
 
-            {/* CTAs */}
+            {/* Enhanced PNR Booking Box */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.6 }}
-              style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '3rem' }}
+              style={{
+                background: 'rgba(15,23,42,0.6)',
+                backdropFilter: 'blur(30px)',
+                padding: '2rem',
+                borderRadius: '2rem',
+                border: '1px solid rgba(255,255,255,0.08)',
+                boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
+                marginBottom: '3rem',
+                maxWidth: '38rem',
+              }}
             >
-              <Link to="/book" style={{ textDecoration: 'none' }}>
-                <AnimatedButton variant="primary" icon={ArrowRight}
-                  style={{ fontSize: '1rem', padding: '0.9rem 2rem' }}>
-                  Book a Coolie Now
-                </AnimatedButton>
-              </Link>
-              <Link to="/coolies" style={{ textDecoration: 'none' }}>
-                <AnimatedButton variant="outline"
-                  style={{ fontSize: '1rem', padding: '0.9rem 2rem' }}>
-                  Browse Coolies
-                </AnimatedButton>
-              </Link>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ fontSize: '0.9rem', color: '#fb923c', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Start your journey</div>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, minWidth: '200px', position: 'relative' }}>
+                    <Ticket size={20} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+                    <input 
+                      type="text" 
+                      placeholder="Enter 10-digit PNR Number"
+                      style={{
+                        width: '100%', height: '3.5rem', background: 'rgba(0,0,0,0.4)',
+                        border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem',
+                        padding: '0 1rem 0 3.25rem', color: '#fff', fontSize: '1rem',
+                        fontFamily: 'var(--font-mono)'
+                      }}
+                    />
+                  </div>
+                  <Link to="/book" style={{ textDecoration: 'none' }}>
+                    <AnimatedButton variant="primary" icon={ArrowRight} style={{ height: '3.5rem', padding: '0 2rem', borderRadius: '1rem' }}>
+                      Book Now
+                    </AnimatedButton>
+                  </Link>
+                </div>
+                <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.5rem' }}>
+                  <Link to="/track" style={{ fontSize: '0.85rem', color: '#94a3b8', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <Search size={14} /> Track Existing Booking
+                  </Link>
+                  <Link to="/coolies" style={{ fontSize: '0.85rem', color: '#94a3b8', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <Users size={14} /> Browse Partners
+                  </Link>
+                </div>
+              </div>
             </motion.div>
 
             {/* Trust row */}
@@ -765,9 +793,9 @@ export default function Home() {
                 <p style={{ fontFamily: 'var(--font-body)', color: '#94a3b8', fontSize: '1.1rem', marginBottom: '2.5rem', lineHeight: 1.7, maxWidth: '35rem', margin: '0 auto 2.5rem' }}>
                   Join <span style={{ color: '#fb923c', fontWeight: 600 }}>50,000+ travelers</span> who book their coolie in advance and travel stress-free.
                 </p>
-                <Link to="/register" style={{ textDecoration: 'none' }}>
+                <Link to="/book" style={{ textDecoration: 'none' }}>
                   <AnimatedButton variant="primary" style={{ fontSize: '1rem', padding: '1rem 2.5rem' }}>
-                    Create Free Account
+                    Book Your Coolie Now
                   </AnimatedButton>
                 </Link>
               </div>

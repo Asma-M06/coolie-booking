@@ -3,15 +3,28 @@ const db = require('../config/db');
 // @desc    Create a new booking
 // @route   POST /api/bookings
 exports.createBooking = async (req, res) => {
-  const { station, trainNumber, platform, luggageType, date, time, passengers, notes, coolieId, totalFare } = req.body;
-  const userId = req.user.id; // From protect middleware
+  const { 
+    station, trainNumber, pnrNumber, passengerName, passengerPhone, 
+    platform, luggageType, date, time, passengers, notes, coolieId, totalFare 
+  } = req.body;
+  
+  // userId from middleware if logged in, else null for guests
+  const userId = req.user ? req.user.id : null;
 
   try {
     const result = await db.query(
-      `INSERT INTO bookings (user_id, coolie_id, station, train_number, platform, luggage_type, date, time, passengers, notes, total_fare)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      `INSERT INTO bookings (
+        user_id, coolie_id, station, train_number, pnr_number, 
+        passenger_name, passenger_phone, platform, luggage_type, 
+        date, time, passengers, notes, total_fare
+      )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
        RETURNING *`,
-      [userId, coolieId || null, station, trainNumber, platform, luggageType, date, time, passengers, notes, totalFare]
+      [
+        userId, coolieId || null, station, trainNumber, pnrNumber || null, 
+        passengerName || null, passengerPhone || null, platform, luggageType, 
+        date, time, passengers || 1, notes, totalFare
+      ]
     );
 
     res.status(201).json({
@@ -50,13 +63,15 @@ exports.getUserBookings = async (req, res) => {
 // @desc    Get coolie's bookings
 // @route   GET /api/bookings/coolie-tasks
 exports.getCoolieBookings = async (req, res) => {
-  const coolieId = req.user.id; // User ID from JWT (which is coolie ID for partners)
+  const coolieId = req.user.id;
 
   try {
     const result = await db.query(
-      `SELECT b.*, u.name as user_name, u.phone as user_phone
+      `SELECT b.*, 
+              COALESCE(u.name, b.passenger_name) as user_name, 
+              COALESCE(u.phone, b.passenger_phone) as user_phone
        FROM bookings b
-       JOIN users u ON b.user_id = u.id
+       LEFT JOIN users u ON b.user_id = u.id
        WHERE b.coolie_id = $1
        ORDER BY b.created_at DESC`,
       [coolieId]
@@ -175,5 +190,35 @@ exports.getCoolieStats = async (req, res) => {
   } catch (err) {
     console.error('Get coolie stats error:', err);
     res.status(500).json({ success: false, message: 'Server error fetching stats' });
+  }
+};
+
+// @desc    Track booking by PNR and Phone
+// @route   POST /api/bookings/track
+exports.trackBooking = async (req, res) => {
+  const { pnr, phone } = req.body;
+
+  if (!pnr || !phone) {
+    return res.status(400).json({ success: false, message: 'PNR and Phone number are required' });
+  }
+
+  try {
+    const result = await db.query(
+      `SELECT b.*, c.first_name as coolie_first_name, c.last_name as coolie_last_name, c.phone as coolie_phone, c.avatar_url as coolie_avatar
+       FROM bookings b
+       LEFT JOIN coolies c ON b.coolie_id = c.id
+       WHERE (b.pnr_number = $1 AND (b.passenger_phone = $2 OR EXISTS (SELECT 1 FROM users u WHERE u.id = b.user_id AND u.phone = $2)))
+       ORDER BY b.created_at DESC`,
+      [pnr, phone]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'No booking found with this PNR and Phone number' });
+    }
+
+    res.json({ success: true, bookings: result.rows });
+  } catch (err) {
+    console.error('Track booking error:', err);
+    res.status(500).json({ success: false, message: 'Server error while tracking booking' });
   }
 };

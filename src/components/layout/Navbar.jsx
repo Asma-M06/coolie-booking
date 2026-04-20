@@ -8,7 +8,7 @@ const navLinks = [
   { label: 'Home',      to: '/',          icon: Home },
   { label: 'Book',      to: '/book',      icon: BookOpen },
   { label: 'Coolies',   to: '/coolies',   icon: Users },
-  { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
+  { label: 'Track',     to: '/track',     icon: LayoutDashboard },
 ];
 
 export default function Navbar() {
@@ -104,12 +104,12 @@ export default function Navbar() {
             {/* ── Desktop Nav Links (always visible) ── */}
             <nav style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }} aria-label="Main navigation">
               {navLinks.filter(link => {
-                if (!user) return ['/', '/coolies'].includes(link.to);
+                if (!user) return ['/', '/book', '/coolies', '/track'].includes(link.to);
                 if (user.role === 'coolie') return ['/', '/coolies', '/coolie-dashboard'].includes(link.to);
-                return ['/', '/book', '/coolies', '/dashboard'].includes(link.to);
+                return ['/', '/book', '/coolies', '/track'].includes(link.to);
               }).map(({ label, to, icon: Icon }) => {
-                const finalTo = (user?.role === 'coolie' && to === '/dashboard') ? '/coolie-dashboard' : to;
-                const finalLabel = (user?.role === 'coolie' && label === 'Dashboard') ? 'My Tasks' : label;
+                const finalTo = (user?.role === 'coolie' && to === '/track') ? '/coolie-dashboard' : to;
+                const finalLabel = (user?.role === 'coolie' && label === 'Track') ? 'My Tasks' : label;
                 
                 return (
                   <Link key={to} to={finalTo} style={linkStyle(isActive(finalTo))}
@@ -154,33 +154,19 @@ export default function Navbar() {
                 </>
               ) : (
                 <>
-                  <Link to="/login" style={{ textDecoration: 'none' }}>
+                  <Link to="/track" style={{ textDecoration: 'none' }}>
                     <motion.button
-                      whileHover={{ color: '#f1f5fd' }}
-                      style={{
-                        fontSize: '0.875rem', color: '#94a3b8', background: 'none', border: 'none',
-                        cursor: 'pointer', fontFamily: 'var(--font-body)', fontWeight: 500,
-                        padding: '0.5rem 0.75rem', borderRadius: '0.625rem',
-                        transition: 'color 0.2s',
-                      }}
-                    >
-                      Login
-                    </motion.button>
-                  </Link>
-                  <Link to="/register" style={{ textDecoration: 'none' }}>
-                    <motion.button
-                      whileHover={{ scale: 1.04, boxShadow: '0 6px 25px rgba(249,115,22,0.55)' }}
+                      whileHover={{ scale: 1.04, boxShadow: '0 6px 25px rgba(249,115,22,0.3)' }}
                       whileTap={{ scale: 0.97 }}
                       style={{
-                        background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                        color: '#fff', border: 'none', borderRadius: '0.75rem',
-                        padding: '0.5rem 1.1rem', fontSize: '0.875rem',
+                        background: 'rgba(249,115,22,0.1)',
+                        color: '#f97316', border: '1px solid rgba(249,115,22,0.2)', 
+                        borderRadius: '0.75rem', padding: '0.5rem 1.1rem', fontSize: '0.875rem',
                         fontFamily: 'var(--font-display)', fontWeight: 700,
-                        cursor: 'pointer', boxShadow: '0 4px 16px rgba(249,115,22,0.4)',
-                        transition: 'all 0.2s',
+                        cursor: 'pointer', transition: 'all 0.2s',
                       }}
                     >
-                      Get Started
+                      Track Booking
                     </motion.button>
                   </Link>
                 </>

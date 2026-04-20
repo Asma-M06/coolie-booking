@@ -63,10 +63,13 @@ CREATE TABLE IF NOT EXISTS admins (
 
 CREATE TABLE IF NOT EXISTS bookings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id),
+  user_id UUID REFERENCES users(id), -- Nullable for guest bookings
   coolie_id UUID REFERENCES coolies(id),
   station VARCHAR(255) NOT NULL,
   train_number VARCHAR(100),
+  pnr_number VARCHAR(100), -- New field for validation
+  passenger_name VARCHAR(255), -- New field for guests
+  passenger_phone VARCHAR(50), -- New field for guests
   platform VARCHAR(50),
   luggage_type VARCHAR(100),
   date DATE NOT NULL,
