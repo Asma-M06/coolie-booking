@@ -78,6 +78,8 @@ CREATE TABLE IF NOT EXISTS bookings (
   notes TEXT,
   total_fare INTEGER,
   status VARCHAR(50) DEFAULT 'pending', -- pending, accepted, rejected, completed
+  trolley_required BOOLEAN DEFAULT FALSE,
+  extra_helpers INTEGER DEFAULT 0,
   rating INTEGER CHECK (rating >= 1 AND rating <= 5),
   feedback TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

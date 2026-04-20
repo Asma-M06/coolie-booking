@@ -145,12 +145,28 @@ export default function CoolieDashboard() {
                         </div>
                       </div>
                       
-                      <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '1rem' }}>
+                      <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '1rem' }}>
                         <div style={{ flex: 1 }}><span style={{ display: 'block', fontSize: '0.65rem', color: '#475569', textTransform: 'uppercase' }}>Train</span><span style={{ fontWeight: 700 }}>{b.train_number || 'N/A'}</span></div>
                         <div style={{ flex: 1 }}><span style={{ display: 'block', fontSize: '0.65rem', color: '#475569', textTransform: 'uppercase' }}>Platform</span><span style={{ fontWeight: 700 }}>{b.platform}</span></div>
                         <div style={{ flex: 1 }}><span style={{ display: 'block', fontSize: '0.65rem', color: '#475569', textTransform: 'uppercase' }}>Luggage</span><span style={{ fontWeight: 700 }}>{b.luggage_type || b.luggageType}</span></div>
                         <div style={{ flex: 1 }}><span style={{ display: 'block', fontSize: '0.65rem', color: '#f97316', textTransform: 'uppercase' }}>Fare</span><span style={{ fontWeight: 800, color: '#f97316' }}>₹{b.total_fare ?? b.totalFare ?? 0}</span></div>
                       </div>
+
+                      {/* Special Requirements Area */}
+                      {(b.trolley_required || (b.extra_helpers > 0)) && (
+                        <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', padding: '0 0.5rem' }}>
+                          {b.trolley_required && (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: 'rgba(59,130,246,0.1)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.2)', fontWeight: 600 }}>
+                              <Luggage size={12} /> Trolley Support
+                            </span>
+                          )}
+                          {b.extra_helpers > 0 && (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.2)', fontWeight: 600 }}>
+                              <Users size={12} /> {b.extra_helpers} Extra Helper(s)
+                            </span>
+                          )}
+                        </div>
+                      )}
                       
                       <div style={{ display: 'flex', gap: '1rem' }}>
                         <AnimatedButton variant="primary" style={{ flex: 1 }} onClick={() => updateStatus(b.id, 'accepted')}>Accept Request</AnimatedButton>
@@ -180,7 +196,12 @@ export default function CoolieDashboard() {
                         </div>
                         <div>
                           <div style={{ fontWeight: 700 }}>{b.station} • Platform {b.platform}</div>
-                          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{b.user_name} • {b.luggage_type || b.luggageType} • <span style={{ color: '#10b981', fontWeight: 700 }}>₹{b.total_fare ?? b.totalFare ?? 0}</span></div>
+                          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                            {b.user_name} • {b.luggage_type || b.luggageType}
+                            {b.trolley_required && <span style={{ color: '#3b82f6', marginLeft: '0.5rem' }}>• Trolley Required</span>}
+                            {b.extra_helpers > 0 && <span style={{ color: '#a855f7', marginLeft: '0.5rem' }}>• {b.extra_helpers} Helpers</span>}
+                            <span style={{ color: '#10b981', fontWeight: 700, marginLeft: '0.5rem' }}>• ₹{b.total_fare ?? b.totalFare ?? 0}</span>
+                          </div>
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: '0.75rem' }}>

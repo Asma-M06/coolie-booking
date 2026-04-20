@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -82,6 +82,33 @@ export default function BookCoolie() {
   });
 
   const update = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+
+  // Dynamic Logic for Trolley/Helpers based on weight/count
+  useEffect(() => {
+    const { small, heavy } = form.luggageQuantities;
+    let newTrolley = form.trolleyRequired;
+    let newHelpers = form.extraHelpers;
+
+    // 1. > 5 small + heavy bags -> 2 coolies (1 base + 1 extra)
+    if ((small + heavy) > 5) {
+      newHelpers = Math.max(newHelpers, 1);
+    }
+
+    // 2. >= 4 heavy bags -> requires Trolley
+    if (heavy >= 4) {
+      newTrolley = true;
+    }
+
+    // 3. > 10 heavy bags -> Trolley + 2 coolies
+    if (heavy > 10) {
+      newTrolley = true;
+      newHelpers = Math.max(newHelpers, 1);
+    }
+
+    if (newTrolley !== form.trolleyRequired || newHelpers !== form.extraHelpers) {
+      setForm(prev => ({ ...prev, trolleyRequired: newTrolley, extraHelpers: newHelpers }));
+    }
+  }, [form.luggageQuantities]);
 
   const canProceed = [
     form.pnrNumber.length === 10 && form.passengerName && form.passengerPhone.length === 10,
@@ -267,28 +294,57 @@ export default function BookCoolie() {
         );
       })}
 
-      <div style={{ marginTop: '0.5rem', padding: '1.25rem', background: 'rgba(249,115,22,0.05)', border: '1px solid rgba(249,115,22,0.1)', borderRadius: '1.5rem' }}>
-        <p style={{ ...labelStyle, fontSize: '0.85rem', color: '#f97316', marginBottom: '1rem' }}>Premium Assistance</p>
-        
-        {/* Trolley */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <input type="checkbox" id="trolley" checked={form.trolleyRequired} onChange={(e) => update('trolleyRequired', e.target.checked)} style={{ width: '1.2rem', height: '1.2rem', accentColor: '#f97316' }} />
-            <label htmlFor="trolley" style={{ color: '#f1f5fd', fontWeight: 600, fontSize: '0.9rem' }}>Require Trolley (+₹150)</label>
-          </div>
-          <Sparkles size={16} color="#fcd34d" />
-        </div>
+      {/* Smart Logistics recommendations */}
+      {(() => {
+        const { small, heavy, large } = form.luggageQuantities;
+        const needsTwoCoolies = (small + heavy) > 5;
+        const needsTrolley = heavy >= 4;
+        const isVeryHeavy = (small > 10) || (large >= 5);
+        const hasSmartSettings = needsTwoCoolies || needsTrolley || isVeryHeavy;
 
-        {/* Helpers */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ color: '#f1f5fd', fontWeight: 600, fontSize: '0.9rem' }}>Extra Helpers (+₹250 ea.)</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'rgba(15, 23, 42, 0.8)', padding: '0.25rem', borderRadius: '0.75rem' }}>
-            <button onClick={() => update('extraHelpers', Math.max(0, form.extraHelpers - 1))} style={{ width: '2rem', height: '2rem', borderRadius: '0.5rem', border: 'none', background: 'rgba(255,255,255,0.05)', color: '#fff' }}>–</button>
-            <span style={{ fontWeight: 800, color: '#f97316', minWidth: '1.5rem', textAlign: 'center' }}>{form.extraHelpers}</span>
-            <button onClick={() => update('extraHelpers', Math.min(3, form.extraHelpers + 1))} style={{ width: '2rem', height: '2rem', borderRadius: '0.5rem', border: 'none', background: 'rgba(249,115,22,0.2)', color: '#f97316' }}>+</button>
+        return (
+          <div style={{ marginTop: '0.5rem', padding: '1.25rem', background: hasSmartSettings ? 'rgba(59,130,246,0.05)' : 'rgba(249,115,22,0.05)', border: `1px solid ${hasSmartSettings ? 'rgba(59,130,246,0.1)' : 'rgba(249,115,22,0.1)'}`, borderRadius: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <p style={{ ...labelStyle, fontSize: '0.85rem', color: hasSmartSettings ? '#3b82f6' : '#f97316', margin: 0 }}>
+                {hasSmartSettings ? 'Smart Logistics Recommendation' : 'Premium Assistance'}
+              </p>
+              {hasSmartSettings && <Info size={14} color="#3b82f6" />}
+            </div>
+            
+            {/* Trolley */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', opacity: isVeryHeavy ? 0.6 : 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <input type="checkbox" id="trolley" checked={form.trolleyRequired} onChange={(e) => update('trolleyRequired', e.target.checked)} disabled={needsTrolley} style={{ width: '1.2rem', height: '1.2rem', accentColor: '#3b82f6' }} />
+                <label htmlFor="trolley" style={{ color: '#f1f5fd', fontWeight: 600, fontSize: '0.9rem' }}>
+                  Require Trolley (+₹150)
+                  {needsTrolley && <span style={{ display: 'block', fontSize: '0.65rem', color: '#3b82f6' }}>Auto-assigned for 4+ heavy bags</span>}
+                </label>
+              </div>
+              <Sparkles size={16} color={needsTrolley ? '#3b82f6' : '#fcd34d'} />
+            </div>
+
+            {/* Helpers */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', opacity: isVeryHeavy ? 0.6 : 1 }}>
+              <div style={{ color: '#f1f5fd', fontWeight: 600, fontSize: '0.9rem' }}>
+                Extra Helpers (+₹250 ea.)
+                {needsTwoCoolies && <span style={{ display: 'block', fontSize: '0.65rem', color: '#3b82f6' }}>Auto-assigned (2 Coolies) for 5+ bags</span>}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'rgba(15, 23, 42, 0.8)', padding: '0.25rem', borderRadius: '0.75rem' }}>
+                <button type="button" onClick={() => update('extraHelpers', Math.max(0, form.extraHelpers - 1))} disabled={needsTwoCoolies} style={{ width: '2rem', height: '2rem', borderRadius: '0.5rem', border: 'none', background: 'rgba(255,255,255,0.05)', color: '#fff' }}>–</button>
+                <span style={{ fontWeight: 800, color: '#f97316', minWidth: '1.5rem', textAlign: 'center' }}>{form.extraHelpers}</span>
+                <button type="button" onClick={() => update('extraHelpers', Math.min(3, form.extraHelpers + 1))} disabled={isVeryHeavy} style={{ width: '2rem', height: '2rem', borderRadius: '0.5rem', border: 'none', background: 'rgba(249,115,22,0.2)', color: '#f97316' }}>+</button>
+              </div>
+            </div>
+
+            {isVeryHeavy && (
+              <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(59,130,246,0.1)', color: '#94a3b8', fontSize: '0.7rem', display: 'flex', gap: '0.5rem' }}>
+                <Users size={12} style={{ flexShrink: 0 }} />
+                <span>Heavy load detected. Additional manual assistance is locked; coordinator will manage dispatch at the platform.</span>
+              </div>
+            )}
           </div>
-        </div>
-      </div>
+        );
+      })()}
     </div>,
 
     /* ─ Step 3: Schedule ─ */
