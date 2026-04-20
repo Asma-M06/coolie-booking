@@ -116,6 +116,30 @@ exports.updateCoolieStatus = async (req, res) => {
   }
 };
 
+exports.deleteCoolie = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // 1. Check if coolie exists
+    const checkRes = await db.query('SELECT id FROM coolies WHERE id = $1', [id]);
+    if (checkRes.rows.length === 0) {
+      return res.status(404).json({ message: 'Partner not found.' });
+    }
+
+    // 2. Handle dependencies (bookings)
+    // We remove associated bookings first to avoid foreign key constraint violations
+    await db.query('DELETE FROM bookings WHERE coolie_id = $1', [id]);
+
+    // 3. Delete coolie
+    await db.query('DELETE FROM coolies WHERE id = $1', [id]);
+
+    res.json({ success: true, message: 'Partner and associated bookings removed successfully.' });
+  } catch (error) {
+    console.error('Error deleting coolie:', error);
+    res.status(500).json({ message: 'Error removing partner from database.' });
+  }
+};
+
 exports.getAllCoolies = async (req, res) => {
   try {
     const result = await db.query(

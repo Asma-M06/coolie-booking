@@ -14,6 +14,7 @@ router.post('/logout', protectAdmin, adminController.logoutAdmin);
 router.get('/coolie-requests', protectAdmin, adminController.getPendingCoolieRequests);
 router.patch('/coolie-requests/:id', protectAdmin, adminController.updateCoolieStatus);
 router.get('/coolies', protectAdmin, adminController.getAllCoolies);
+router.delete('/coolies/:id', protectAdmin, adminController.deleteCoolie);
 
 // Settings
 router.patch('/profile', protectAdmin, adminController.updateAdminProfile);
