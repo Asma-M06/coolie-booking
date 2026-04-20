@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, Search, MapPin, Phone, Calendar, 
-  ShieldCheck, Loader2, Filter, Download, Eye, X
+  ShieldCheck, Loader2, Filter, Download, Eye, X, Trash2
 } from 'lucide-react';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import config from '../config/env';
 
 function ImageModal({ src, onClose }) {
@@ -49,6 +50,43 @@ export default function AdminCoolieList() {
       console.error('Failed to fetch coolie registry:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteCoolie = async (id, name) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `You are about to remove ${name} from the coolie registry. This action cannot be undone.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: 'rgba(255,255,255,0.1)',
+      confirmButtonText: 'Yes, delete coolie',
+      background: '#0f172a',
+      color: '#f8fafc'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${config.apiBaseUrl}/admin/coolies/${id}`, { withCredentials: true });
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'Coolie has been removed successfully.',
+          icon: 'success',
+          background: '#0f172a',
+          color: '#f8fafc',
+          confirmButtonColor: '#10b981'
+        });
+        fetchCoolies(); // Refresh list
+      } catch (err) {
+        Swal.fire({
+          title: 'Error!',
+          text: err.response?.data?.message || 'Failed to remove coolie.',
+          icon: 'error',
+          background: '#0f172a',
+          color: '#f8fafc'
+        });
+      }
     }
   };
 
@@ -168,6 +206,11 @@ export default function AdminCoolieList() {
                   onClick={() => setSelectedImage(config.getImageUrl(c.aadhar_image))}
                   style={{ flex: 1, padding: '0.75rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', color: '#f8fafc', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                   <Eye size={16} /> View Docs
+                </button>
+                <button 
+                  onClick={() => handleDeleteCoolie(c.id, `${c.first_name} ${c.last_name}`)}
+                  style={{ padding: '0.75rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '0.75rem', color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Trash2 size={16} />
                 </button>
               </div>
             </motion.div>

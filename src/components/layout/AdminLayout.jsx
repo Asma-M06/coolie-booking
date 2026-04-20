@@ -47,8 +47,8 @@ export default function AdminLayout() {
 
   const menuItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-    { name: 'Onboarding Queue', path: '/admin/coolie-requests', icon: UserCheck },
-    { name: 'Coolie Registry', path: '/admin/coolie-list', icon: Users },
+    { name: 'Pending Coolies', path: '/admin/coolie-requests', icon: UserCheck },
+    { name: 'Approved Coolies', path: '/admin/coolie-list', icon: Users },
     { name: 'Settings', path: '/admin/settings', icon: Settings },
   ];
 

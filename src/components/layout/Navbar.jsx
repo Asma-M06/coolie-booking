@@ -154,6 +154,12 @@ export default function Navbar() {
                 </>
               ) : (
                 <>
+                  <Link to="/login" style={{ textDecoration: 'none', color: '#94a3b8', fontSize: '0.875rem', fontFamily: 'var(--font-body)', fontWeight: 500, marginRight: '1rem' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#f1f5fd'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}
+                  >
+                    Coolie Login
+                  </Link>
                   <Link to="/track" style={{ textDecoration: 'none' }}>
                     <motion.button
                       whileHover={{ scale: 1.04, boxShadow: '0 6px 25px rgba(249,115,22,0.3)' }}
