@@ -12,3 +12,4 @@ init-db.js
 migrate-theme.js
 repair-glass.cjs
 *.log
+backend/uploads

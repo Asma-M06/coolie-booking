@@ -103,11 +103,7 @@ npm run dev
 
 ## 🔐 Administrative Access
 To access the restricted Command Center:
-1. Navigate to `/login` and click **"Access Admin Portal"**.
-2. **Default Credentials**: 
-   - **Email**: `admin@cooliebook.in`
-   - **Password**: `Admin@2026` *(Reset via `backend/reset-admin-password.js` if needed)*
-
+ Navigate to `/login` and click **"Access Admin Portal"**.
 ---
 
 ### 🇮🇳 Built for Indian Railways
