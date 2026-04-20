@@ -65,7 +65,7 @@ function BookingCard({ booking }) {
         />
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{booking.coolie_first_name} {booking.coolie_last_name}</div>
-          <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Professional Coolie Partner</div>
+          <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Professional Coolie Assistant</div>
         </div>
         <a href={`tel:${booking.coolie_phone}`} style={{ textDecoration: 'none' }}>
           <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 20px rgba(249,115,22,0.3)' }}>
@@ -130,7 +130,7 @@ export default function TrackBooking() {
               Track Your <span style={{ color: '#f97316' }}>Coolie</span>
             </h1>
             <p style={{ color: '#94a3b8', fontSize: '1.1rem', maxWidth: '30rem', margin: '0 auto' }}>
-              Enter your PNR details to view real-time status and contact your assigned partner.
+              Enter your PNR details to view real-time status and contact your assigned coolie.
             </p>
           </div>
 

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Star, MapPin, Search, Luggage, UserCheck, Award, Zap, ArrowRight, Loader2 } from 'lucide-react';
+import { Star, MapPin, Search, Luggage, UserCheck, Award, Zap, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import AnimatedButton from '../components/ui/AnimatedButton';
 import PageTransition from '../components/ui/PageTransition';
 import TrainTrack from '../components/ui/TrainTrack';
@@ -93,16 +93,7 @@ function CoolieCard({ coolie, delay }) {
           </span>
         </div>
         
-        {user?.role !== 'coolie' && (
-          <Link to="/book" state={{ coolieId: coolie.id, coolieName: `${coolie.first_name} ${coolie.last_name}` }} style={{ textDecoration: 'none', display: 'block' }}>
-            <AnimatedButton
-              variant="primary"
-              style={{ width: '100%', padding: '0.7rem', fontSize: '0.875rem' }}
-            >
-              Book Now
-            </AnimatedButton>
-          </Link>
-        )}
+        {/* No individual booking button - using auto-assignment */}
       </div>
     </motion.div>
   );
@@ -172,6 +163,26 @@ export default function CoolieListing() {
       </section>
 
       <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '2.5rem 2rem 5rem' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{
+            background: 'rgba(249,115,22,0.08)',
+            border: '1px solid rgba(249,115,22,0.2)',
+            borderRadius: '1rem',
+            padding: '1rem 1.5rem',
+            marginBottom: '2rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem'
+          }}
+        >
+          <Sparkles size={20} color="#f97316" />
+          <p style={{ color: '#cbd5e1', fontSize: '0.9rem', margin: 0 }}>
+            <strong style={{ color: '#f97316' }}>Auto-Assignment Active:</strong> Individual coolies cannot be selected manually. Our system will automatically assign the best available coolie at your station once you book.
+          </p>
+        </motion.div>
+
         {/* Search + Filter */}
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}

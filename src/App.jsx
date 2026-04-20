@@ -43,9 +43,9 @@ function AnimatedRoutes() {
           {/* Main Site Routes with MainLayout */}
           <Route element={<MainLayout />}>
             <Route path="/"                   element={<Home />} />
-            <Route path="/login"              element={<Navigate to="/track" replace />} />
+            <Route path="/login"              element={<Login />} />
             <Route path="/register"           element={<Navigate to="/track" replace />} />
-            <Route path="/coolie-register"    element={<Navigate to="/track" replace />} />
+            <Route path="/coolie-register"    element={<CoolieRegister />} />
             
             {/* Passenger & Guest Routes (No Login Required) */}
             <Route path="/dashboard"          element={<Dashboard />} />

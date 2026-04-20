@@ -265,7 +265,7 @@ export default function CoolieRegister() {
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}
             transition={{ duration: 10, ease: 'easeOut', repeat: Infinity, repeatType: 'reverse' }}
-            src={BG_IMAGE} alt="Indian Railway Partner"
+            src={BG_IMAGE} alt="Indian Railway Coolie"
             style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }} 
           />
           {/* Intense Overlays */}
@@ -324,7 +324,7 @@ export default function CoolieRegister() {
                 <Sparkles size={28} color="#10b981" style={{ filter: 'drop-shadow(0 0 8px rgba(16,185,129,0.8))' }} />
               </motion.div>
               <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '2.25rem', color: '#ffffff', letterSpacing: '-0.02em', margin: 0 }}>
-                Partner Onboarding
+                Coolie Onboarding
               </h1>
               <p style={{ fontFamily: 'var(--font-body)', color: '#94a3b8', marginTop: '0.5rem', fontSize: '0.95rem' }}>
                 Join the official railway assistance network
@@ -379,7 +379,7 @@ export default function CoolieRegister() {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '2rem 0' }}>
                 <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1))' }} />
-                <span style={{ fontSize: '0.75rem', color: '#64748b', fontFamily: 'var(--font-body)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Existing Partner?</span>
+                <span style={{ fontSize: '0.75rem', color: '#64748b', fontFamily: 'var(--font-body)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Existing Coolie?</span>
                 <div style={{ flex: 1, height: '1px', background: 'linear-gradient(270deg, transparent, rgba(255,255,255,0.1))' }} />
               </div>
 

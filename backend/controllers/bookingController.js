@@ -5,36 +5,73 @@ const db = require('../config/db');
 exports.createBooking = async (req, res) => {
   const { 
     station, trainNumber, pnrNumber, passengerName, passengerPhone, 
-    platform, luggageType, date, time, passengers, notes, coolieId, totalFare 
+    platform, luggageType, date, time, passengers, notes, 
+    trolleyRequired, extraHelpers 
   } = req.body;
   
-  // userId from middleware if logged in, else null for guests
   const userId = req.user ? req.user.id : null;
 
   try {
+    // 1. Auto-Assignment: Find an available coolie at this station
+    // We use partial matching ($1 ILIKE '%' || city || '%') so 'Pune Junction' matches 'Pune'
+    const findCoolie = await db.query(
+      `SELECT id, first_name, last_name FROM coolies 
+       WHERE $1 ILIKE '%' || city || '%' 
+       AND status = 'available' 
+       AND is_approved = TRUE
+       ORDER BY registered_at ASC LIMIT 1`,
+      [station]
+    );
+
+    if (findCoolie.rows.length === 0) {
+      console.log(`Assignment failed: No approved available coolies found for station "${station}"`);
+      return res.status(404).json({ 
+        success: false, 
+        message: `No partners currently available at ${station}. Please try again shortly.` 
+      });
+    }
+
+    const assignedCoolieId = findCoolie.rows[0].id;
+
+    // 2. Dynamic Fare Calculation
+    // Base luggage fare (provided from frontend or calculated here)
+    let totalFare = req.body.totalFare || 0; 
+    const trolleyFee = trolleyRequired ? 150 : 0;
+    const helpersFee = (extraHelpers || 0) * 250;
+    const finalFare = totalFare + trolleyFee + helpersFee;
+
     const result = await db.query(
       `INSERT INTO bookings (
         user_id, coolie_id, station, train_number, pnr_number, 
         passenger_name, passenger_phone, platform, luggage_type, 
-        date, time, passengers, notes, total_fare
+        date, time, passengers, notes, total_fare, trolley_required, extra_helpers
       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
        RETURNING *`,
       [
-        userId, coolieId || null, station, trainNumber, pnrNumber || null, 
+        userId, assignedCoolieId, station, trainNumber, pnrNumber || null, 
         passengerName || null, passengerPhone || null, platform, luggageType, 
-        date, time, passengers || 1, notes, totalFare
+        date, time, passengers || 1, notes, finalFare,
+        trolleyRequired || false, extraHelpers || 0
       ]
     );
 
+    // 3. Mark Coolie as Busy
+    await db.query('UPDATE coolies SET status = \'busy\' WHERE id = $1', [assignedCoolieId]);
+
     res.status(201).json({
       success: true,
-      message: 'Booking request sent successfully',
-      booking: result.rows[0]
+      message: 'Booking request assigned successfully',
+      booking: result.rows[0],
+      assignedCoolieId
     });
   } catch (err) {
-    console.error('Create booking error:', err);
-    res.status(500).json({ success: false, message: 'Server error while creating booking' });
+    console.error('--- CREATE BOOKING ERROR ---');
+    console.error('Message:', err.message);
+    if (err.detail) console.error('Detail:', err.detail);
+    if (err.code) console.error('Postgres Code:', err.code);
+    if (err.stack) console.error('Stack:', err.stack);
+    res.status(500).json({ success: false, message: 'Server error while creating booking', error: err.message });
   }
 };
 
@@ -102,6 +139,11 @@ exports.updateBookingStatus = async (req, res) => {
       'UPDATE bookings SET status = $1 WHERE id = $2 RETURNING *',
       [status, id]
     );
+
+    // If completed or rejected, set coolie to available
+    if (status === 'completed' || status === 'rejected') {
+      await db.query('UPDATE coolies SET status = \'available\' WHERE id = $1', [coolieId]);
+    }
 
     res.json({ success: true, booking: result.rows[0] });
   } catch (err) {

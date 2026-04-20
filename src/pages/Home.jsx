@@ -82,7 +82,7 @@ const features = [
 const steps = [
   { n: '01', icon: Ticket,       title: 'Enter PNR', desc: 'Enter your 10-digit PNR for journey details', color: '#f97316' },
   { n: '02', icon: Navigation,  title: 'Choose Station', desc: 'Select your railway station & platform', color: '#f59e0b' },
-  { n: '03', icon: Luggage,     title: 'Pick Partner', desc: 'Pick an available coolie for your luggage', color: '#10b981' },
+  { n: '03', icon: Zap,         title: 'Auto-Assignment', desc: 'System assigns the nearest verified partner instantly', color: '#10b981' },
   { n: '04', icon: CheckCircle, title: 'Travel Stress-free', desc: 'Coolie meets you at the exact platform', color: '#6366f1' },
 ];
 
@@ -595,13 +595,7 @@ export default function Home() {
                           Featured
                         </span>
                       </div>
-                      {user?.role !== 'coolie' && (
-                        <Link to="/book" state={{ coolieId: c.id, coolieName: fullName }} style={{ textDecoration: 'none', display: 'block', marginTop: '1rem' }}>
-                          <AnimatedButton variant="primary" style={{ width: '100%', padding: '0.7rem', fontSize: '0.875rem' }}>
-                            Book Now
-                          </AnimatedButton>
-                        </Link>
-                      )}
+                      {/* No individual booking button - using auto-assignment */}
                     </div>
                   </motion.div>
                 );
@@ -722,7 +716,7 @@ export default function Home() {
         <div style={{ maxWidth: '72rem', margin: '0 auto', display: 'grid', gap: '4rem', alignItems: 'center' }} className="md:grid-cols-2">
           <FadeIn order={2} className="md:order-1">
             <span className="section-pill" style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', color: '#10b981', marginBottom: '1.25rem', display: 'inline-flex' }}>
-              <UserCheck size={12} /> Become a Partner
+              <UserCheck size={12} /> Join as a Coolie
             </span>
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(1.8rem,4vw,2.5rem)', color: '#f1f5fd', lineHeight: 1.2, marginBottom: '1.25rem' }}>
               Are you a professional Coolie? Join our network.
@@ -737,14 +731,22 @@ export default function Home() {
               </div>
               <div>
                 <div style={{ color: '#10b981', fontWeight: 800, fontSize: '1.5rem', marginBottom: '0.25rem' }}>5000+</div>
-                <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>Active partners across India</div>
+                <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>Active coolies across India</div>
               </div>
             </div>
-            <Link to="/coolie-register" style={{ textDecoration: 'none' }}>
-              <AnimatedButton variant="primary" icon={Sparkles} style={{ background: 'linear-gradient(135deg, #10b981, #059669)', border: 'none' }}>
-                Apply as a Coolie
-              </AnimatedButton>
-            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginTop: '1.5rem' }}>
+              <Link to="/coolie-register" style={{ textDecoration: 'none' }}>
+                <AnimatedButton variant="primary" icon={Sparkles} style={{ background: 'linear-gradient(135deg, #10b981, #059669)', border: 'none' }}>
+                  Apply as a Coolie
+                </AnimatedButton>
+              </Link>
+              <Link to="/login" style={{ color: '#94a3b8', fontSize: '0.9rem', fontFamily: 'var(--font-body)', textDecoration: 'none' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#10b981'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}
+              >
+                Already have an account? <span style={{ fontWeight: 600, color: '#10b981' }}>Login</span>
+              </Link>
+            </div>
           </FadeIn>
           <FadeIn order={1} className="md:order-2" delay={0.2}>
             <div style={{ position: 'relative', borderRadius: '1.5rem', overflow: 'hidden', aspectRatio: '4/3', boxShadow: '0 30px 80px rgba(0,0,0,0.5)' }}>

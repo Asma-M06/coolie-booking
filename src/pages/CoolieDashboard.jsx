@@ -90,7 +90,7 @@ export default function CoolieDashboard() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                <span style={{ padding: '0.2rem 0.6rem', border: '1px solid #10b981', borderRadius: '4px', fontSize: '0.65rem', color: '#10b981', fontWeight: 800, textTransform: 'uppercase' }}>Partner Online</span>
+                <span style={{ padding: '0.2rem 0.6rem', border: '1px solid #10b981', borderRadius: '4px', fontSize: '0.65rem', color: '#10b981', fontWeight: 800, textTransform: 'uppercase' }}>Coolie Online</span>
                 <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', fontWeight: 800 }}>Namaste, <span style={{ color: '#f97316' }}>{user?.name?.split(' ')[0]}</span></h1>
               </div>
               <p style={{ color: '#64748b' }}>Manage your incoming requests and trip history.</p>
@@ -199,7 +199,7 @@ export default function CoolieDashboard() {
                <div style={{ background: 'linear-gradient(45deg, #1e293b, #0f172a)', borderRadius: '2rem', padding: '2rem', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
                     <Award size={40} color="#fcd34d" style={{ margin: '0 auto 1rem' }} />
-                    <h3 style={{ fontWeight: 800, fontSize: '1.1rem' }}>Gold Partner</h3>
+                    <h3 style={{ fontWeight: 800, fontSize: '1.1rem' }}>Elite Coolie</h3>
                     <p style={{ fontSize: '0.8rem', color: '#64748b' }}>Maintain 4.8+ rating for bonus</p>
                   </div>
                   <div style={{ height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden' }}>

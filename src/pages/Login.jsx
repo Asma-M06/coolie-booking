@@ -154,10 +154,10 @@ export default function Login() {
                 <Sparkles size={28} color="#f97316" style={{ filter: 'drop-shadow(0 0 8px rgba(249,115,22,0.8))' }} />
               </motion.div>
               <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '2.25rem', color: '#ffffff', letterSpacing: '-0.02em', margin: 0 }}>
-                Partner Login
+                Coolie Login
               </h1>
               <p style={{ fontFamily: 'var(--font-body)', color: '#94a3b8', marginTop: '0.5rem', fontSize: '0.95rem' }}>
-                Securely sign in to your Coolie partner account
+                Securely sign in to your Coolie account
               </p>
             </div>
 
